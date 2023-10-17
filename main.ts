@@ -1,5 +1,35 @@
+function OnClap () {
+    basic.showLeds(`
+        . . . . .
+        . . # . .
+        . # # # .
+        . # # # #
+        # # # # #
+        `)
+    if (input.soundLevel() > 100) {
+        P = !(P)
+        if (P == true) {
+            maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
+            maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.AllLed, maqueenPlusV2.MyEnumSwitch.Open)
+        } else {
+            maqueenPlusV2.controlMotorStop(maqueenPlusV2.MyEnumMotor.AllMotor)
+            maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.AllLed, maqueenPlusV2.MyEnumSwitch.Close)
+        }
+    }
+}
+function OnShake () {
+    music.play(music.createSoundExpression(WaveShape.Sawtooth, 382, 908, 255, 255, 611, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
+    basic.showIcon(IconNames.Angry)
+    basic.pause(1000)
+}
 function LineTracking () {
-    basic.showIcon(IconNames.Happy)
+    basic.showLeds(`
+        # . . . #
+        # . # . #
+        # . # . #
+        # . . . #
+        # . # . #
+        `)
     while (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 0 || (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR1) == 0 || maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorM) == 0)) {
         if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL1) == 0 && (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorM) == 1 && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR1) == 0)) {
             maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 180)
@@ -31,6 +61,7 @@ function LineTracking () {
     }
 }
 input.onButtonPressed(Button.A, function () {
+    basic.pause(3000)
     onModeChangeBack()
 })
 IR.IR_callbackUser(function (message) {
@@ -75,7 +106,13 @@ IR.IR_callbackUser(function (message) {
     }
 })
 function SensorLed () {
-    basic.showIcon(IconNames.StickFigure)
+    basic.showLeds(`
+        # . # # #
+        . # . # #
+        # . # . #
+        # # . # .
+        # # # . #
+        `)
     if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL2) == 1 && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2) == 0) {
         maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Open)
         basic.pause(5)
@@ -96,21 +133,12 @@ function clear () {
     basic.clearScreen()
 }
 input.onButtonPressed(Button.B, function () {
+    basic.pause(3000)
     onModeChangeForward()
 })
-function onModeChange () {
-    if (mode == 1) {
-        basic.showIcon(IconNames.Happy)
-    } else if (mode == 2) {
-        basic.showIcon(IconNames.Sad)
-    } else if (mode == 3) {
-        basic.showIcon(IconNames.StickFigure)
-    } else if (mode == 4) {
-        basic.showIcon(IconNames.EighthNote)
-    } else {
-        basic.showIcon(IconNames.Asleep)
-    }
-}
+input.onGesture(Gesture.Shake, function () {
+    OnShake()
+})
 function PokemonTheme () {
     basic.showIcon(IconNames.EighthNote)
     music.setTempo(133)
@@ -163,7 +191,13 @@ function PokemonTheme () {
     isPlayingMusic = true
 }
 function ObjectAvoidance () {
-    basic.showIcon(IconNames.Sad)
+    basic.showLeds(`
+        . # . . .
+        . . # . .
+        . # # # .
+        . # # # .
+        . # # # .
+        `)
     if (maqueenPlusV2.readUltrasonic(DigitalPin.P1, DigitalPin.P2) > 15) {
         maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 136)
         maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.AllLed, maqueenPlusV2.MyEnumSwitch.Close)
@@ -181,41 +215,57 @@ function ObjectAvoidance () {
 }
 function onModeChangeBack () {
     clear()
+    basic.showLeds(`
+        . . # . .
+        . # . . .
+        # # # # #
+        . # . . .
+        . . # . .
+        `)
     music._playDefaultBackground(music.builtInPlayableMelody(Melodies.JumpDown), music.PlaybackMode.InBackground)
     if (mode != 0) {
         mode += -1
     } else {
         basic.showLeds(`
+            # . . . #
+            . # . # .
             . . # . .
-            . # . . .
-            # # # # #
-            . # . . .
-            . . # . .
+            . # . # .
+            # . . . #
             `)
     }
 }
 function onModeChangeForward () {
     clear()
+    basic.showLeds(`
+        . . # . .
+        . . . # .
+        # # # # #
+        . . . # .
+        . . # . .
+        `)
     music._playDefaultBackground(music.builtInPlayableMelody(Melodies.JumpUp), music.PlaybackMode.InBackground)
-    if (mode != 4) {
+    if (mode != 5) {
         mode += 1
     } else {
         basic.showLeds(`
+            # . . . #
+            . # . # .
             . . # . .
-            . . . # .
-            # # # # #
-            . . . # .
-            . . # . .
+            . # . # .
+            # . . . #
             `)
     }
 }
 let isPlayingMusic = false
+let P = false
 let mode = 0
 maqueenPlusV2.I2CInit()
-basic.showString("Pikachu?")
+music._playDefaultBackground(music.builtInPlayableMelody(Melodies.Entertainer), music.PlaybackMode.InBackground)
+basic.showString("Hello")
 mode = 0
+P = true
 basic.forever(function () {
-    basic.pause(3000)
     if (mode == 1) {
         LineTracking()
     } else if (mode == 2) {
@@ -223,8 +273,10 @@ basic.forever(function () {
     } else if (mode == 3) {
         SensorLed()
     } else if (mode == 4 && isPlayingMusic == false) {
+        OnClap()
+    } else if (mode == 5 && isPlayingMusic == false) {
         PokemonTheme()
     } else {
-        basic.showIcon(IconNames.Ghost)
+        basic.showIcon(IconNames.Happy)
     }
 })
