@@ -1,22 +1,3 @@
-function OnClap () {
-    basic.showLeds(`
-        . . . . .
-        . . # . .
-        . # # # .
-        . # # # #
-        # # # # #
-        `)
-    if (input.soundLevel() > 100) {
-        P = !(P)
-        if (P == true) {
-            maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 50)
-            maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.AllLed, maqueenPlusV2.MyEnumSwitch.Open)
-        } else {
-            maqueenPlusV2.controlMotorStop(maqueenPlusV2.MyEnumMotor.AllMotor)
-            maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.AllLed, maqueenPlusV2.MyEnumSwitch.Close)
-        }
-    }
-}
 function OnShake () {
     music.play(music.createSoundExpression(WaveShape.Sawtooth, 382, 908, 255, 255, 611, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
     basic.showIcon(IconNames.Angry)
@@ -113,15 +94,26 @@ function SensorLed () {
         # # . # .
         # # # . #
         `)
-    if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL2) == 1 && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2) == 0) {
-        maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Open)
-        basic.pause(5)
-        maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Close)
+    R = 0
+    G = 0
+    G = 0
+    for (let index = 0; index < 255; index++) {
+        R += 1
+        B += -1
+        strip.showColor(neopixel.rgb(R, G, B))
+        basic.pause(1)
     }
-    if (maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorL2) == 0 && maqueenPlusV2.readLineSensorState(maqueenPlusV2.MyEnumLineSensor.SensorR2) == 1) {
-        maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Open)
-        basic.pause(5)
-        maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Close)
+    for (let index = 0; index < 255; index++) {
+        G += 1
+        R += -1
+        strip.showColor(neopixel.rgb(R, G, B))
+        basic.pause(1)
+    }
+    for (let index = 0; index < 255; index++) {
+        B += 1
+        G += -1
+        strip.showColor(neopixel.rgb(R, G, B))
+        basic.pause(1)
     }
 }
 function clear () {
@@ -258,13 +250,18 @@ function onModeChangeForward () {
     }
 }
 let isPlayingMusic = false
-let P = false
+let B = 0
+let G = 0
+let R = 0
+let strip: neopixel.Strip = null
 let mode = 0
 maqueenPlusV2.I2CInit()
 music._playDefaultBackground(music.builtInPlayableMelody(Melodies.Entertainer), music.PlaybackMode.InBackground)
+music.setVolume(0)
 basic.showString("Hello")
 mode = 0
-P = true
+let P = true
+strip = neopixel.create(DigitalPin.P15, 4, NeoPixelMode.RGB)
 basic.forever(function () {
     if (mode == 1) {
         LineTracking()
@@ -273,8 +270,6 @@ basic.forever(function () {
     } else if (mode == 3) {
         SensorLed()
     } else if (mode == 4 && isPlayingMusic == false) {
-        OnClap()
-    } else if (mode == 5 && isPlayingMusic == false) {
         PokemonTheme()
     } else {
         basic.showIcon(IconNames.Happy)

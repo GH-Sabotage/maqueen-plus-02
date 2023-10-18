@@ -6,7 +6,8 @@
         "radio": "*",
         "microphone": "*",
         "maqueenPlusV2": "github:dfrobot/pxt-dfrobot_maqueenplus_v20#v2.1.1",
-        "microturtle": "github:microsoft/pxt-microturtle#v0.0.9"
+        "microturtle": "github:microsoft/pxt-microturtle#v0.0.9",
+        "neopixel": "github:microsoft/pxt-neopixel#v0.7.5"
     },
     "files": [
         "main.blocks",
